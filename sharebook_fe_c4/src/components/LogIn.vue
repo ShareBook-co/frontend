@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import gpl from 'graphql-tag';
 
 export default {
     name: "LogIn",
@@ -33,23 +33,29 @@ export default {
     },
 
     methods: {
-        processLogInUser: function(){
-            axios.post(
-                "https://be-sharebook.herokuapp.com/login/",
-                this.user,
-                {headers: {}}
+        processLogInUser: async function(){
+                await this.$apollo.mutate(
+                    {
+                        mutation: gpl`
+
+                        `,
+                        variables: {
+                            credentials: this.user,
+                        }
+                    }
                 )
+                
                 .then((result) => {
                     let dataLogIn = {
                         username: this.user.username,
-                        token_access: result.data.access,
-                        token_refresh: result.data.refresh,
+                        token_access: result.data.mutationName.access,
+                        token_refresh: result.data.mutationName.refresh,
                     }
                     this.$emit('completedLogIn', dataLogIn)
                 })
+                
                 .catch((error) => {
-
-                    if (error.response.status == "401")
+                    console.log(error);
                         alert("ERROR 401: Credenciales Incorrectas.");
                 });
         }

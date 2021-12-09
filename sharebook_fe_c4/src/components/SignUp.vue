@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import gpl from 'graphql-tag';
 
 export default {
     name: "SignUp",
@@ -58,15 +58,24 @@ export default {
     },
 
     methods: {
-        processSignUp: function(){
-            axios.post("https://be-sharebook.herokuapp.com/user/",this.user,{headers: {}})
+        processSignUp: async function(){
+                await this.$apollo.mutate(
+                    {
+                        mutation: gpl`
+
+                        `,
+                        variables: {
+                            userInput: this.user,
+                        }
+                    }
+                )
+            
                 .then((result) => {
                     let dataSignUp = {
-                        username: this.user.username,
-                        token_access: result.data.access,
-                        token_refresh: result.data.refresh,
+                        username     : this.user.username,
+                        token_access : result.data.nombreMutation.access,
+                        token_refresh: result.data.nombreMutation.refresh,
                     }
-
                     this.$emit('completedSignUp', dataSignUp)
                 })
                 .catch((error) => {
