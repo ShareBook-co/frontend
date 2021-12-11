@@ -63,8 +63,8 @@
 </template>
 
 <script>
+import gpl from "graphql-tag";
 import jwt_decode from "jwt-decode";
-import axios from 'axios';
 import ListBookVue from './ListBook.vue';
 
 export default {
@@ -88,21 +88,28 @@ export default {
 
     methods: {
         processAddBook: async function(){
-            if (localStorage.getItem("token_access") === null || localStorage.getItem("token_refresh") === null) {
-                this.$emit('logOut');
-                return;
-            }
-
-            await this.verifyToken();
-            let token = localStorage.getItem("token_access");
-            let userId = jwt_decode(token).user_id.toString();
-
-            this.book.user = userId
-            this.book.author = [this.book.author]
-
-            axios.post(`https://be-sharebook.herokuapp.com/book/`,this.book,{headers: {'Authorization': `Bearer ${token}`}})
-
-
+                await this.$apollo.mutate(
+                        {
+                            mutation: gpl`
+                               utation CreateBook($book: BookInput!) {
+                                  createBook(book: $book) {
+                                    isbn
+                                    title
+                                    language
+                                    price
+                                    state
+                                    editorial
+                                    author
+                                    grade
+                                  }
+                                }
+                            `,
+                            variables: {
+                                credentials: this.book,
+                            },
+                        }
+                    )
+                
                 .then((result) => {
                     alert("Registro Exitoso");
                 })

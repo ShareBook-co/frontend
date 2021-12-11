@@ -27,9 +27,9 @@ export default {
         return {
             user: {
                 username:"",
-                password:""
-            }
-        }
+                password:"",
+            },
+        };
     },
 
     methods: {
@@ -37,11 +37,16 @@ export default {
                 await this.$apollo.mutate(
                     {
                         mutation: gpl`
-
+                            mutation LogIn($credentials: Credentials!) {
+                              logIn(credentials: $credentials) {
+                                refresh
+                                acces
+                              }
+                            }
                         `,
                         variables: {
                             credentials: this.user,
-                        }
+                        },
                     }
                 )
                 
@@ -50,16 +55,17 @@ export default {
                         username: this.user.username,
                         token_access: result.data.mutationName.access,
                         token_refresh: result.data.mutationName.refresh,
-                    }
-                    this.$emit('completedLogIn', dataLogIn)
+                    };
+                    this.$emit('completedLogIn', dataLogIn);
                 })
                 
                 .catch((error) => {
                     console.log(error);
-                        alert("ERROR 401: Credenciales Incorrectas.");
+                    alert("ERROR 401: Credenciales Incorrectas.");
+
                 });
-        }
-    }
+        },
+    },
 }
 </script>
 

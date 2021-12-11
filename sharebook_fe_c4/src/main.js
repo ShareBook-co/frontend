@@ -1,12 +1,12 @@
-import { createApp } from 'vue'
-import App from './App.vue'
-import router from './router'
-import { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client/core'
+import { createApp }                                    from 'vue'
+import App                                              from './App.vue'
+import router                                           from './router'
+import { ApolloClient, createHttpLink, InMemoryCache }  from '@apollo/client/core'
 import { createApolloProvider }                         from '@vue/apollo-option'
 import { setContext }                                   from 'apollo-link-context'
 
 const httpLink = createHttpLink({
-    uri: ''
+    uri: 'https://apigateway-sh.herokuapp.com/'
 })
 
 const authLink = setContext((_, { headers }) => {
@@ -20,7 +20,7 @@ const authLink = setContext((_, { headers }) => {
 
 const apolloClient = new ApolloClient({
     link: authLink.concat( httpLink ),
-    cache: InMemoryCache
+    cache: new InMemoryCache()
 })
 
 const apolloProvider = new createApolloProvider ({

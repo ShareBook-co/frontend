@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import gpl from "graphql-tag";
 
 export default {
     name: "Book",

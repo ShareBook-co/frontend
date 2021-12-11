@@ -46,15 +46,15 @@ export default {
     data: function(){
         return {
             user: {
-                username: "",
-                password: "",
-                name: "",
-                email: "",
-                address: "",
-                phone: "",
-                gender: ""
-            }
-        }
+                "username": "",
+                "password": "",
+                "name": "",
+                "email": "",
+                "address": "",
+                "phone": 0,
+                "gender": true,
+            },
+        };
     },
 
     methods: {
@@ -62,11 +62,16 @@ export default {
                 await this.$apollo.mutate(
                     {
                         mutation: gpl`
-
+                                mutation SignUpUser($userInput: SignUpInput!) {
+                                signUpUser(userInput: $userInput) {
+                                    refresh
+                                    acces
+                                }
+                            }
                         `,
                         variables: {
                             userInput: this.user,
-                        }
+                        },
                     }
                 )
             
@@ -83,8 +88,8 @@ export default {
                     alert("ERROR: Fallo en el registro.");
 
                 });
-        }
-    }
+        },
+    },
 }
 </script>
 

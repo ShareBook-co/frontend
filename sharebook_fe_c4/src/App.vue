@@ -43,55 +43,53 @@
 export default {
   name: 'App',
 
-  data: function(){
-      return{
-        is_auth: false
-      }
-  },
-
-  components: {
+  computed: {
+    is_auth: {
+      get: function() {
+        return this.$route.meta.requiresAuth;
+      },
+      set: function() { }
+    }
   },
 
   methods:{
-    verifyAuth: function() {
-          this.is_auth = localStorage.getItem("isAuth") || false;
-      
-          if(this.is_auth == false)
-            this.$router.push({name: "logIn"});
-          else
-            this.$router.push({ name: "home" });
-    },
+
     loadLogIn: function(){
         this.$router.push({name: "logIn"})
     },
+    
     loadSignUp: function(){
         this.$router.push({name: "signUp"})
     },
+    
     loadHome: function() {
         this.$router.push({ name: "home" });
     },
+    
     logOut: function () {
         localStorage.clear();
         alert("Sesión Cerrada");
         this.verifyAuth();
     },
+    
     loadUser: function () {
       this.$router.push({ name: "user" });
     },
+    
     loadAddBook: function () {
       this.$router.push({ name: "addbook" });
     },
+    
     loadListBook: function () {
       this.$router.push({ name: "book" });
     },
 
     completedLogIn: function(data) {
-        localStorage.setItem("isAuth", true);
         localStorage.setItem("username", data.username);
         localStorage.setItem("token_access", data.token_access);
         localStorage.setItem("token_refresh", data.token_refresh);
         alert("Autenticación Exitosa");
-        this.verifyAuth();
+        this.loadHome;
     },
 
     completedSignUp: function(data) {
