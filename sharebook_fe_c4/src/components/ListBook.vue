@@ -44,46 +44,54 @@ export default {
 
     data: function(){
         return {
-            books: [],
-            loaded: false,
-        }
+            book: {
+             price: 0,
+             state: "",
+            },
+        };
     },
 
+    
     methods: {
-        getData: async function () {
-
-            if (localStorage.getItem("token_access") === null || localStorage.getItem("token_refresh") === null) {
-                this.$emit('logOut');
-                return;
-            }
-
-            await this.verifyToken();
-            let token = localStorage.getItem("token_access");
-
-
-            axios.get(`https://be-sharebook.herokuapp.com/book/`, {headers: {'Authorization': `Bearer ${token}`}})
+        processListBook: async function(){
+                await this.$apollo.mutate(
+                    {
+                        mutation: gpl`
+                            mutation UpdateBook($book: BookUpdate!) {
+                              updateBook(book: $book) {
+                                id
+                                isbn
+                                title
+                                language
+                                price
+                                state
+                                editorial
+                                author
+                                grade
+                              }
+                            }
+                        `,
+                        variables: {
+                            credentials: this.user,
+                        },
+                    }
+                )
+                
                 .then((result) => {
-                    this.books = result.data;
-                    this.loaded = true;
-                    })
+                    let dataUpdateBook = {
+                        username: this.user.username,
+                        token_access: result.data.UpdateBook.access,
+                        token_refresh: result.data.UpdateBook.refresh,
+                    };
+                    this.$emit('completedListBook', dataUpdateBook);
+                })
+                
                 .catch((error) => {
-                    console.log(error.response.data)
+                    console.log(error);
+                    alert("ERROR 401: Credenciales Incorrectas.");
+
                 });
         },
-
-        verifyToken: function () {
-            return axios.post("https://be-sharebook.herokuapp.com/refresh/", {refresh: localStorage.getItem("token_refresh")}, {headers: {}})
-                .then((result) => {
-                    localStorage.setItem("token_access", result.data.access);
-                })
-                .catch(() => {
-                    this.$emit('logOut');
-                });
-        }
-    },
-
-    created: async function(){
-        this.getData();
     },
 }
 </script>

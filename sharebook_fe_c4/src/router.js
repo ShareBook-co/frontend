@@ -8,6 +8,7 @@ import Home from './components/Home.vue'
 import User from './components/User.vue'
 import AddBook from './components/AddBook.vue'
 import Book from './components/ListBook.vue'
+import Billing from './components/Billing.vue'
 
 const routes = [{
         path: '/',
@@ -17,32 +18,58 @@ const routes = [{
     {
         path: '/user/logIn',
         name: "logIn",
-        component: LogIn
+        component: LogIn,
+        meta     : {
+            requiresAuth: false
+        }
     },
     {
         path: '/user/signUp',
         name: "signUp",
-        component: SignUp
+        component: SignUp,
+        meta     : {
+            requiresAuth: false
+        }
     },
     {
         path: '/user/home',
         name: "home",
-        component: Home
+        component: Home,
+        meta     : {
+            requiresAuth: true
+        }
     },
     {
         path: '/user/user',
         name: "user",
-        component: User
+        component: User,
+        meta     : {
+            requiresAuth: true
+        }
     },
     {
         path: '/book/create',
         name: "addbook",
-        component: AddBook
+        component: AddBook,
+        meta     : {
+            requiresAuth: true
+        }
     },
     {
         path: '/book/list',
         name: "book",
-        component: Book
+        component: Book,
+        meta     : {
+            requiresAuth: true
+        }
+    },
+    {
+        path: '/user/billing',
+        name: "billing",
+        component: Billing,
+        meta     : {
+            requiresAuth: true
+        }
     }
 ];
 
@@ -50,6 +77,14 @@ const router = createRouter({
   history: createWebHashHistory(),
   routes
 });
+
+router.beforeEach(async(to, from) => {
+    console.log(`Redirecting from ${from} to ${to}...`)
+    var is_auth = await isAuth();
+
+    if(is_auth == to.meta.requiresAuth)
+        return true
+})
 
 const apolloClient = new ApolloClient({
     link: createHttpLink({ uri: 'https://apigateway-sh.herokuapp.com/' }),

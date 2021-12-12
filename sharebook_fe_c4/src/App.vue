@@ -15,6 +15,7 @@
           <button v-if="is_auth" v-on:click="loadUser"> Usuario </button>
           <button v-if="is_auth" v-on:click="loadAddBook" > Agregar Libro </button>
           <button v-if="is_auth" v-on:click="loadListBook" > Libros </button>
+          <button v-if="is_auth" v-on:click="loadBilling" > Facturación </button>
           <button v-if="is_auth" v-on:click="logOut"> Cerrar Sesión </button>
           <button v-if="!is_auth" v-on:click="loadLogIn" > Iniciar Sesión </button>
           <button v-if="!is_auth" v-on:click="loadSignUp" > Registrarse </button>
@@ -78,6 +79,10 @@ export default {
     
     loadAddBook: function () {
       this.$router.push({ name: "addbook" });
+    },
+
+    loadBilling: function () {
+      this.$router.push({ name: "billing"});
     },
     
     loadListBook: function () {

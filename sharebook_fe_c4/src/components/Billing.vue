@@ -1,18 +1,12 @@
 <template>
 
-    <div v-if="loaded" class="information">
-        <h1><center>Información del Usuario</center></h1>
-        <h2><center>Nombre: <span>{{ userDetailById.name }}</span></center></h2>
-        <h2><center>Correo electrónico: <span>{{ userDetailById.email }}</span></center></h2>
-        <h2><center>Dirección: <span>{{ userDetailById.address }}</span></center></h2>
-        <h2><center>Teléfono: <span>{{ userDetailById.phone }}</span></center></h2>
-        <!-- <h2>Genero: <span>{{gender}}</span></h2> -->
-        <h2><center>
-            Género:
-            <span v-if="!gender">Masculino</span>
-            <span v-if="gender">Femenino</span> 
-        </center>
-        </h2>
+    <div class="billing" id="billing">
+        <div class="container_billing">
+            <h2> Facturación </h2>
+
+            <form v-on: submit.prevent="processBilling">
+                
+            </form>
     </div>
 
 </template>
@@ -22,7 +16,7 @@ import gpl from "graphql-tag";
 import jwt_decode from "jwt-decode";
 
 export default {
-    name: "User",
+    name: "Billing",
 
     data: function(){
         return {
@@ -59,7 +53,7 @@ export default {
 </script>
 
 
-<style>
+<style scoped>
     .information{
         /* margin: 0;
         padding: 0%; */
@@ -95,6 +89,5 @@ export default {
         font-weight: bold;
     }
 </style>
-
 
 

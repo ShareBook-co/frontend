@@ -73,15 +73,14 @@ export default {
     data: function(){
         return {
             book: {
-                isbn: "",
+                isbn: 0,
                 title: "",
                 language: "",
-                price: "",
-                state: true,
+                price: 0,
+                state: "",
                 editorial: "",
                 grade: "",
-                author: [],
-                user: "",
+                author: "",
             }
         }
     },
@@ -110,29 +109,22 @@ export default {
                         }
                     )
                 
-                .then((result) => {
-                    alert("Registro Exitoso");
+                 .then((result) => {
+                    let dataAddBook = {
+                        username: this.user.username,
+                        token_access: result.data.CreateBook.access,
+                        token_refresh: result.data.CreateBook.refresh,
+                    };
+                    this.$emit('completedAddBook', dataAddBook);
                 })
-                .catch((error) => {
-                    console.log(error)
-                    alert("ERROR: Fallo en el registro.");
-                    console.log(error.response.data)
-
-                });
                 
-        },
-        verifyToken: function () {
-            return axios.post("https://be-sharebook.herokuapp.com/refresh/", {refresh: localStorage.getItem("token_refresh")}, {headers: {}})
-                .then((result) => {
-                    localStorage.setItem("token_access", result.data.access);
-                })
-                .catch(() => {
-                    this.$emit('logOut');
-                    
-                });
-        }
+                .catch((error) => {
+                    console.log(error);
+                    alert("ERROR 401: Credenciales Incorrectas.");
 
-    }
+                });
+        },
+    },
 }
 </script>
 

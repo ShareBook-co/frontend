@@ -53,8 +53,8 @@ export default {
                 .then((result) => {
                     let dataLogIn = {
                         username: this.user.username,
-                        token_access: result.data.mutationName.access,
-                        token_refresh: result.data.mutationName.refresh,
+                        token_access: result.data.Login.access,
+                        token_refresh: result.data.Login.refresh,
                     };
                     this.$emit('completedLogIn', dataLogIn);
                 })
