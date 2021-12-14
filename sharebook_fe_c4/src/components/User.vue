@@ -18,44 +18,44 @@
 </template>
 
 <script>
-import gpl from "graphql-tag";
-import jwt_decode from "jwt-decode";
+    import gpl from "graphql-tag";
+    import jwt_decode from "jwt-decode";
 
-export default {
-    name: "User",
+    export default {
+        name: "User",
 
-    data: function(){
-        return {
-            userId: jwt_decode( localStorage.getItem("token_refresh" ) ).user_id,
-            userDetailById: {
-                name: "",
-                email: "",
-                address: "",
-                phone: 0,
-            }
-        };
-    },
-
-    apollo: {
-        userDetailById: {
-            query: gpl `
-                query UserDetailById($userId: Int!) {
-                    userDetailById(userId: $userId) {
-                        name
-                        email
-                        address
-                        phone
-                    }
+        data: function(){
+            return {
+                userId: jwt_decode( localStorage.getItem("token_refresh" ) ).user_id,
+                userDetailById: {
+                    name: "",
+                    email: "",
+                    address: "",
+                    phone: 0,
                 }
-            `,
-            variables() {
-                return {
-                    userId: this.data,
-                };
-            }
+            };
         },
-    }
-};
+
+        apollo: {
+            userDetailById: {
+                query: gpl `
+                    query UserDetailById($userId: Int!) {
+                        userDetailById(userId: $userId) {
+                            name
+                            email
+                            address
+                            phone
+                        }
+                    }
+                `,
+                variables() {
+                    return {
+                        userId: this.data,
+                    };
+                }
+            },
+        }
+    };
 </script>
 
 

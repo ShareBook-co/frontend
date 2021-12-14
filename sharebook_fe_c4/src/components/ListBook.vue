@@ -37,63 +37,63 @@
 </template>
 
 <script>
-import gpl from "graphql-tag";
+    import gpl from "graphql-tag";
 
-export default {
-    name: "Book",
+    export default {
+        name: "Book",
 
-    data: function(){
-        return {
-            book: {
-             price: 0,
-             state: "",
-            },
-        };
-    },
-
-    
-    methods: {
-        processListBook: async function(){
-                await this.$apollo.mutate(
-                    {
-                        mutation: gpl`
-                            mutation UpdateBook($book: BookUpdate!) {
-                              updateBook(book: $book) {
-                                id
-                                isbn
-                                title
-                                language
-                                price
-                                state
-                                editorial
-                                author
-                                grade
-                              }
-                            }
-                        `,
-                        variables: {
-                            credentials: this.user,
-                        },
-                    }
-                )
-                
-                .then((result) => {
-                    let dataUpdateBook = {
-                        username: this.user.username,
-                        token_access: result.data.UpdateBook.access,
-                        token_refresh: result.data.UpdateBook.refresh,
-                    };
-                    this.$emit('completedListBook', dataUpdateBook);
-                })
-                
-                .catch((error) => {
-                    console.log(error);
-                    alert("ERROR 401: Credenciales Incorrectas.");
-
-                });
+        data: function(){
+            return {
+                book: {
+                price: 0,
+                state: "",
+                },
+            };
         },
-    },
-}
+
+        
+        methods: {
+            processListBook: async function(){
+                    await this.$apollo.mutate(
+                        {
+                            mutation: gpl`
+                                mutation UpdateBook($book: BookUpdate!) {
+                                updateBook(book: $book) {
+                                    id
+                                    isbn
+                                    title
+                                    language
+                                    price
+                                    state
+                                    editorial
+                                    author
+                                    grade
+                                }
+                                }
+                            `,
+                            variables: {
+                                credentials: this.user,
+                            },
+                        }
+                    )
+                    
+                    .then((result) => {
+                        let dataUpdateBook = {
+                            username: this.user.username,
+                            token_access: result.data.UpdateBook.access,
+                            token_refresh: result.data.UpdateBook.refresh,
+                        };
+                        this.$emit('completedListBook', dataUpdateBook);
+                    })
+                    
+                    .catch((error) => {
+                        console.log(error);
+                        alert("ERROR 401: Credenciales Incorrectas.");
+
+                    });
+            },
+        },
+    }
 </script>
 
 <style>

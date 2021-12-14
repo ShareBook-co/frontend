@@ -18,55 +18,53 @@
 </template>
 
 <script>
-import gpl from 'graphql-tag';
+    import gql from 'graphql-tag';
+    export default {
+        name: "LogIn",
 
-export default {
-    name: "LogIn",
-
-    data: function(){
-        return {
-            user: {
-                username:"",
-                password:"",
-            },
-        };
-    },
-
-    methods: {
-        processLogInUser: async function(){
-                await this.$apollo.mutate(
-                    {
-                        mutation: gpl`
-                            mutation LogIn($credentials: Credentials!) {
-                              logIn(credentials: $credentials) {
-                                refresh
-                                acces
-                              }
-                            }
-                        `,
-                        variables: {
-                            credentials: this.user,
-                        },
-                    }
-                )
-                
-                .then((result) => {
-                    let dataLogIn = {
-                        username: this.user.username,
-                        token_access: result.data.Login.access,
-                        token_refresh: result.data.Login.refresh,
-                    };
-                    this.$emit('completedLogIn', dataLogIn);
-                })
-                
-                .catch((error) => {
-                    console.log(error);
-                    alert("ERROR 401: Credenciales Incorrectas.");
-
-                });
+        data: function(){
+            return {
+                user: {
+                    username:"",
+                    password:"",
+                }
+            }
         },
-    },
-}
+
+        methods: {
+            processLogInUser: async function(){
+                console.log(this.user);
+                    await this.$apollo.mutate(
+                        {
+                            mutation: gql`
+                               mutation LogIn($credentials: Credentials!) {
+                                    logIn(credentials: $credentials) {
+                                        refresh
+                                        access
+                                    }
+                                }
+                            `,
+                            variables: {
+                                credentials: this.user
+                            }
+                        }
+                    )
+                    .then((result) => {
+                        let dataLogIn = {
+                            username     : this.user.username,
+                            token_access : result.data.logIn.access,
+                            token_refresh: result.data.logIn.refresh,
+                        };
+                        this.$emit('completedLogIn', dataLogIn);
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        alert("ERROR 401: Credenciales Incorrectas.");
+
+                    });
+            }
+        }
+    }
 </script>
 
 <style>

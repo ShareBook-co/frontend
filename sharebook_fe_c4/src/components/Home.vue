@@ -16,7 +16,7 @@
 
 
 <script>
-import gpl         from "graphql-tag";
+import gql         from "graphql-tag";
 import jwt_decode from "jwt-decode";
 
 
@@ -34,7 +34,7 @@ export default {
 
     apollo: {
         userDetailById: {
-            query: gpl `
+            query: gql `
                 query UserDetailById($userId: Int!) {
                     userDetailById(userId: $userId) {
                         name
@@ -43,7 +43,7 @@ export default {
             `,
             variables() {
                 return {
-                    userId: this.data,
+                    userId: this.data.userId,
                 };
             }
         },

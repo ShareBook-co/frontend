@@ -18,16 +18,16 @@
                 <input type="number" v-model="user.phone" placeholder="Teléfono">
                 <br>
                 <label for=""><center>Genero</center></label>
-                <input type="radio" name="estado" value=True v-model="user.gender" ><center>Femenino</center>
-                <input type="radio" name="estado" value=False v-model="user.gender" ><center>Masculino</center>
-                <!-- <br>
+                <!--
+                <input type="radio" name="estado" value="false" v-model="user.gender" ><center>Femenino</center>
+                <input type="radio" name="estado" value="true" v-model="user.gender" ><center>Masculino</center> -->
+                
                 <label >Genero</label>
                 <select v-model="user.gender">
                     <option disabled selected>Selecione el género</option>
-                    <option value=False>Masculino</option>
-                    <option value=True>Femenino</option>
+                    <option value="False">Masculino</option>
+                    <option value="True">Femenino</option>
                 </select>
-                <span>Seleccionado:{{user.gender}}</span> -->
                 <br>
                 <button type="submit">Registrarse</button>
             </form>
@@ -38,59 +38,68 @@
 </template>
 
 <script>
-import gpl from 'graphql-tag';
+    import gql from "graphql-tag";
 
-export default {
-    name: "SignUp",
+    export default {
+        name: "SignUp",
 
-    data: function(){
-        return {
-            user: {
-                "username": "",
-                "password": "",
-                "name": "",
-                "email": "",
-                "address": "",
-                "phone": 0,
-                "gender": true,
-            },
-        };
-    },
-
-    methods: {
-        processSignUp: async function(){
-                await this.$apollo.mutate(
-                    {
-                        mutation: gpl`
-                                mutation SignUpUser($userInput: SignUpInput!) {
-                                signUpUser(userInput: $userInput) {
-                                    refresh
-                                    acces
-                                }
-                            }
-                        `,
-                        variables: {
-                            userInput: this.user,
-                        },
-                    }
-                )
-            
-                .then((result) => {
-                    let dataSignUp = {
-                        username     : this.user.username,
-                        token_access : result.data.SignUpUser.access,
-                        token_refresh: result.data.SignUpUser.refresh,
-                    }
-                    this.$emit('completedSignUp', dataSignUp)
-                })
-                .catch((error) => {
-                    console.log(error)
-                    alert("ERROR: Fallo en el registro.");
-
-                });
+        data: function(){
+            return {
+                user: {
+                    username: "",
+                    password: "",
+                    name: "",
+                    email: "",
+                    address: "",
+                    phone: 0,
+                    gender: true,
+                },
+            };
         },
-    },
-}
+
+        methods: {
+            processSignUp: async function(){
+                console.log("metodo"),
+                console.log(this.user),
+                
+                    await this.$apollo.mutate(
+                        {
+                            mutation: gql`
+                                  mutation SignUpUser($userInput: SignUpInput!) {
+                                    signUpUser(userInput: $userInput) {
+                                        refresh
+                                        access
+                                    }
+                                }
+                            `,
+                            variables: { 
+                                userInput: {
+                                    userInput: this.user,
+                                }
+                                
+                            }
+                        }
+                    )
+
+                    .then((result) => {
+                        let dataSignUp = {
+                            username     : this.user.username,
+                            token_access : result.data.signUpUser.access,
+                            token_refresh: result.data.signUpUser.refresh
+                        };
+
+                        this.$emit("completedSignUp", dataSignUp);
+                    })
+
+
+                    .catch((error) => {
+                        console.log(error)
+                        alert("ERROR: Fallo en el registro.");
+
+                    });
+            },
+        },
+    }
 </script>
 
 <style>

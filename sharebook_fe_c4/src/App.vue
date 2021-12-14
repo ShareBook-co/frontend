@@ -41,74 +41,68 @@
 </template>
 
 <script>
-export default {
-  name: 'App',
+  export default {
+    name: 'App',
 
-  computed: {
-    is_auth: {
-      get: function() {
-        return this.$route.meta.requiresAuth;
-      },
-      set: function() { }
-    }
-  },
+    computed: {
+      is_auth: {
+        get: function() {
+          return this.$route.meta.requiresAuth;
+        },
+        set: function() {
 
-  methods:{
-
-    loadLogIn: function(){
-        this.$router.push({name: "logIn"})
+        }
+      }
     },
-    
-    loadSignUp: function(){
-        this.$router.push({name: "signUp"})
-    },
-    
-    loadHome: function() {
+
+    methods:{
+      loadHome: function () {
         this.$router.push({ name: "home" });
-    },
-    
-    logOut: function () {
+      },
+      
+      loadUser: function () {
+        this.$router.push({ name: "user" });
+      },
+
+      logOut: function () {
         localStorage.clear();
         alert("Sesión Cerrada");
         this.verifyAuth();
-    },
-    
-    loadUser: function () {
-      this.$router.push({ name: "user" });
-    },
-    
-    loadAddBook: function () {
-      this.$router.push({ name: "addbook" });
+      },
+      
+      loadLogIn: function(){
+        this.$router.push({name: "LogIn"})
+      },
+      
+      loadSignUp: function(){
+          this.$router.push({name: "signUp"})
+      },
+
+      completedLogIn: function(data){
+          localStorage.setItem("username", data.username);
+          localStorage.setItem("token_refresh", data.token_refresh);
+          localStorage.setItem("token_access", data.token_access);
+          alert("Autenticación Exitosa");
+          this.loadHome;
+      },
+      
+      loadAddBook: function () {
+        this.$router.push({ name: "addbook" });
+      },
+      
+      loadListBook: function () {
+        this.$router.push({ name: "book" });
+      },
+
+      completedSignUp: function(data) {
+          alert("Registro Exitoso");
+          this.completedLogIn(data);
+      },
     },
 
-    loadBilling: function () {
-      this.$router.push({ name: "billing"});
-    },
-    
-    loadListBook: function () {
-      this.$router.push({ name: "book" });
-    },
-
-    completedLogIn: function(data) {
-        localStorage.setItem("username", data.username);
-        localStorage.setItem("token_access", data.token_access);
-        localStorage.setItem("token_refresh", data.token_refresh);
-        alert("Autenticación Exitosa");
-        this.loadHome;
-    },
-
-    completedSignUp: function(data) {
-        alert("Registro Exitoso");
-        this.completedLogIn(data);
-    },
-
-  },
-
-  created: function(){
-        this.verifyAuth()
+    created: function(){
+    }
   }
-
-}
 </script>
 
 <style>

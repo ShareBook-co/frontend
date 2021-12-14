@@ -63,69 +63,69 @@
 </template>
 
 <script>
-import gpl from "graphql-tag";
-import jwt_decode from "jwt-decode";
-import ListBookVue from './ListBook.vue';
+    import gql from "graphql-tag";
+    import jwt_decode from "jwt-decode";
+    import ListBookVue from './ListBook.vue';
 
-export default {
-    name: "AddBook",
+    export default {
+        name: "AddBook",
 
-    data: function(){
-        return {
-            book: {
-                isbn: 0,
-                title: "",
-                language: "",
-                price: 0,
-                state: "",
-                editorial: "",
-                grade: "",
-                author: "",
+        data: function(){
+            return {
+                book: {
+                    isbn: 0,
+                    title: "",
+                    language: "",
+                    price: 0,
+                    state: "",
+                    editorial: "",
+                    grade: "",
+                    author: "",
+                }
             }
-        }
-    },
-
-    methods: {
-        processAddBook: async function(){
-                await this.$apollo.mutate(
-                        {
-                            mutation: gpl`
-                               utation CreateBook($book: BookInput!) {
-                                  createBook(book: $book) {
-                                    isbn
-                                    title
-                                    language
-                                    price
-                                    state
-                                    editorial
-                                    author
-                                    grade
-                                  }
-                                }
-                            `,
-                            variables: {
-                                credentials: this.book,
-                            },
-                        }
-                    )
-                
-                 .then((result) => {
-                    let dataAddBook = {
-                        username: this.user.username,
-                        token_access: result.data.CreateBook.access,
-                        token_refresh: result.data.CreateBook.refresh,
-                    };
-                    this.$emit('completedAddBook', dataAddBook);
-                })
-                
-                .catch((error) => {
-                    console.log(error);
-                    alert("ERROR 401: Credenciales Incorrectas.");
-
-                });
         },
-    },
-}
+
+        methods: {
+            processAddBook: async function(){
+                    await this.$apollo.mutate(
+                            {
+                                mutation: gql`
+                                mutation CreateBook($book: BookInput!) {
+                                        createBook(book: $book) {
+                                            isbn
+                                            title
+                                            language
+                                            price
+                                            state
+                                            editorial
+                                            author
+                                            grade
+                                        }
+                                    }
+                                `,
+                                variables: {
+                                    credentials: this.book,
+                                },
+                            }
+                        )
+                    
+                    .then((result) => {
+                        let dataAddBook = {
+                            username: this.user.username,
+                            token_access: result.data.CreateBook.access,
+                            token_refresh: result.data.CreateBook.refresh,
+                        };
+                        this.$emit('completedAddBook', dataAddBook);
+                    })
+                    
+                    .catch((error) => {
+                        console.log(error);
+                        alert("ERROR 401: Credenciales Incorrectas.");
+
+                    });
+            },
+        },
+    }
 </script>
 
 <style>
