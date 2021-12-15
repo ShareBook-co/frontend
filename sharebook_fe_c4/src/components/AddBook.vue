@@ -112,10 +112,10 @@
                     .then((result) => {
                         let dataAddBook = {
                             username: this.user.username,
-                            token_access: result.data.CreateBook.access,
-                            token_refresh: result.data.CreateBook.refresh,
+                            token_access: result.data.createBook.access,
+                            token_refresh: result.data.createBook.refresh,
                         };
-                        this.$emit('completedAddBook', dataAddBook);
+                        this.$emit("completedAddBook", dataAddBook);
                     })
                     
                     .catch((error) => {

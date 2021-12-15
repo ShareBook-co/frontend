@@ -59,8 +59,8 @@
 
         methods: {
             processSignUp: async function(){
-                console.log("metodo"),
                 console.log(this.user),
+                console.log("metodo"),
                 
                     await this.$apollo.mutate(
                         {
@@ -76,7 +76,6 @@
                                 userInput: {
                                     userInput: this.user,
                                 }
-                                
                             }
                         }
                     )
@@ -85,7 +84,7 @@
                         let dataSignUp = {
                             username     : this.user.username,
                             token_access : result.data.signUpUser.access,
-                            token_refresh: result.data.signUpUser.refresh
+                            token_refresh: result.data.signUpUser.refresh,
                         };
 
                         this.$emit("completedSignUp", dataSignUp);

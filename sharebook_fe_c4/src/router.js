@@ -1,36 +1,37 @@
-import gql from "graphql-tag";
-import { createRouter, createWebHashHistory } from 'vue-router'
-import { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client/core'
+import { createRouter, createWebHashHistory }         from 'vue-router'
+import gql                                            from "graphql-tag"
+import { ApolloClient, createHttpLink, InMemoryCache} from '@apollo/client/core'
 
-import LogIn from './components/LogIn.vue'
-import SignUp from './components/SignUp.vue'
-import Home from './components/Home.vue'
-import User from './components/User.vue'
+import LogIn   from './components/LogIn.vue'
+import SignUp  from './components/SignUp.vue'
+import Home    from './components/Home.vue'
+import User    from './components/User.vue'
 import AddBook from './components/AddBook.vue'
-import Book from './components/ListBook.vue'
+import Book    from './components/ListBook.vue'
 
-const routes = [{
-        path: '/user/logIn',
-        name: "LogIn",
-        component: LogIn,
-        meta     : {
-            requiresAuth: false
+const routes = [
+    {
+        path      : '/user/logIn',
+        name      : "logIn",
+        component : LogIn,
+        meta      : {
+            requiresAuth: false,
         }
     },
     {
-        path: '/user/signUp',
-        name: "signUp",
-        component: SignUp,
-        meta     : {
-            requiresAuth: false
+        path      : '/user/signUp',
+        name      : "signUp",
+        component : SignUp,
+        meta      : {
+            requiresAuth: false,
         }
     },
     {
-        path: '/user/home',
-        name: "home",
-        component: Home,
-        meta     : {
-            requiresAuth: true
+        path      : '/user/home',
+        name      : "home",
+        component : Home,
+        meta      : {
+            requiresAuth: true,
         }
     },
     {
@@ -38,7 +39,7 @@ const routes = [{
         name: "user",
         component: User,
         meta     : {
-            requiresAuth: true
+            requiresAuth: true,
         }
     },
     {
@@ -46,7 +47,7 @@ const routes = [{
         name: "addbook",
         component: AddBook,
         meta     : {
-            requiresAuth: true
+            requiresAuth: true,
         }
     },
     {
@@ -54,7 +55,7 @@ const routes = [{
         name: "book",
         component: Book,
         meta     : {
-            requiresAuth: true
+            requiresAuth: true,
         }
     },
 ];
@@ -75,8 +76,10 @@ async function isAuth() {
     if (localStorage.getItem("token_access") === null || localStorage.getItem("token_refresh") === null) {
         return false;
     }
+
     try {
-        var result = await apolloClient.mutate({
+        var result = await apolloClient.mutate(
+            {
                 mutation: gql `
                 mutation RefreshToken($refresh: Refresh!) {
                     refreshToken(refresh: $refresh) {
@@ -88,13 +91,14 @@ async function isAuth() {
                     refresh: {
                         refresh: localStorage.getItem("token_refresh")
                     }                    
-            },
+            }
         }
     )
 
         localStorage.setItem("token_access", result.data.refreshToken.access);
         return true;
-    } catch(error) {
+    } 
+    catch(error) {
         localStorage.clear();
         alert("Su sesión expiró, por favor vuelva a iniciar sesión");
         return false;
@@ -111,7 +115,9 @@ router.beforeEach(async(to, from) => {
     if (is_auth)
         return { name: "home" };
     else
-        return { name: "LogIn" };
+        return { name: "logIn" };
 });
+
+
 export default router;
 

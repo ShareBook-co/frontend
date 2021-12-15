@@ -1,14 +1,9 @@
 <template>
 
     <!-- <div class="greetings"> -->
-    <div v-if="loaded" class="greetings">
+    <div class="greetings">
         <!-- <h1>¡Bienvenid@ <span> {{gender}} </span>!</h1> -->
-        <h1>
-            <span v-if="!gender">Bienvenido </span>
-            <span v-if="gender">Bienvenida </span> 
-            <span> {{ userDetailById.name }} </span>
-        </h1>
-
+        <h1> Bienvenido <span> {{ userDetailById.name }} </span>! </h1>
     </div>
 
 </template>
@@ -43,7 +38,7 @@ export default {
             `,
             variables() {
                 return {
-                    userId: this.data.userId,
+                    userId: this.userId,
                 };
             }
         },

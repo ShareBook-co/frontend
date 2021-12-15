@@ -4,7 +4,6 @@
     <div class="header">
 
       <img src="./assets/logo_libro.png">
-      <h1><em>Share<span>Book</span></em></h1>
       <!-- <h1><em>Share<span>Book®</span></em></h1> -->
 
     </div> 
@@ -15,7 +14,6 @@
           <button v-if="is_auth" v-on:click="loadUser"> Usuario </button>
           <button v-if="is_auth" v-on:click="loadAddBook" > Agregar Libro </button>
           <button v-if="is_auth" v-on:click="loadListBook" > Libros </button>
-          <button v-if="is_auth" v-on:click="loadBilling" > Facturación </button>
           <button v-if="is_auth" v-on:click="logOut"> Cerrar Sesión </button>
           <button v-if="!is_auth" v-on:click="loadLogIn" > Iniciar Sesión </button>
           <button v-if="!is_auth" v-on:click="loadSignUp" > Registrarse </button>
@@ -49,9 +47,7 @@
         get: function() {
           return this.$route.meta.requiresAuth;
         },
-        set: function() {
-
-        }
+        set: function() { }
       }
     },
 
@@ -66,12 +62,12 @@
 
       logOut: function () {
         localStorage.clear();
-        alert("Sesión Cerrada");
-        this.verifyAuth();
+        alert("Sesión Terminada");
+        this.loadLogIn();
       },
       
       loadLogIn: function(){
-        this.$router.push({name: "LogIn"})
+        this.$router.push({name: "logIn"})
       },
       
       loadSignUp: function(){
@@ -79,9 +75,9 @@
       },
 
       completedLogIn: function(data){
-          localStorage.setItem("username", data.username);
-          localStorage.setItem("token_refresh", data.token_refresh);
-          localStorage.setItem("token_access", data.token_access);
+          localStorage.setItem('username', data.username);
+          localStorage.setItem('token_refresh', data.token_refresh);
+          localStorage.setItem('token_access', data.token_access);
           alert("Autenticación Exitosa");
           this.loadHome;
       },
@@ -108,6 +104,11 @@
 <style>
   body{
     margin: 0 0 0 0;
+  }
+
+  .header img{
+    height: 210%;
+
   }
 
   .header{

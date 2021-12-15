@@ -1,6 +1,6 @@
 <template>
 
-    <div v-if="loaded" class="informations">
+    <div class="informations">
 
         <table>
             <center>
@@ -37,7 +37,7 @@
 </template>
 
 <script>
-    import gpl from "graphql-tag";
+    import gql from "graphql-tag";
 
     export default {
         name: "Book",
@@ -45,8 +45,7 @@
         data: function(){
             return {
                 book: {
-                price: 0,
-                state: "",
+                    bookId: 0,
                 },
             };
         },
@@ -56,9 +55,9 @@
             processListBook: async function(){
                     await this.$apollo.mutate(
                         {
-                            mutation: gpl`
-                                mutation UpdateBook($book: BookUpdate!) {
-                                updateBook(book: $book) {
+                            mutation: gql`
+                                query BooksById($bookId: String!) {
+                                  booksById(bookId: $bookId) {
                                     id
                                     isbn
                                     title
@@ -68,7 +67,7 @@
                                     editorial
                                     author
                                     grade
-                                }
+                                  }
                                 }
                             `,
                             variables: {
@@ -80,8 +79,8 @@
                     .then((result) => {
                         let dataUpdateBook = {
                             username: this.user.username,
-                            token_access: result.data.UpdateBook.access,
-                            token_refresh: result.data.UpdateBook.refresh,
+                            token_access: result.data.updateBook.access,
+                            token_refresh: result.data.updateBook.refresh,
                         };
                         this.$emit('completedListBook', dataUpdateBook);
                     })
