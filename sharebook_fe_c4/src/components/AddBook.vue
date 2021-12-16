@@ -63,70 +63,69 @@
 </template>
 
 <script>
-import jwt_decode from "jwt-decode";
-import axios from 'axios';
-import ListBookVue from './ListBook.vue';
+    import gql from "graphql-tag";
+    import jwt_decode from "jwt-decode";
+    import ListBookVue from './ListBook.vue';
 
-export default {
-    name: "AddBook",
+    export default {
+        name: "AddBook",
 
-    data: function(){
-        return {
-            book: {
-                isbn: "",
-                title: "",
-                language: "",
-                price: "",
-                state: true,
-                editorial: "",
-                grade: "",
-                author: [],
-                user: "",
+        data: function(){
+            return {
+                book: {
+                    isbn: 0,
+                    title: "",
+                    language: "",
+                    price: 0,
+                    state: "",
+                    editorial: "",
+                    grade: "",
+                    author: "",
+                }
             }
-        }
-    },
-
-    methods: {
-        processAddBook: async function(){
-            if (localStorage.getItem("token_access") === null || localStorage.getItem("token_refresh") === null) {
-                this.$emit('logOut');
-                return;
-            }
-
-            await this.verifyToken();
-            let token = localStorage.getItem("token_access");
-            let userId = jwt_decode(token).user_id.toString();
-
-            this.book.user = userId
-            this.book.author = [this.book.author]
-
-            axios.post(`https://be-sharebook.herokuapp.com/book/`,this.book,{headers: {'Authorization': `Bearer ${token}`}})
-
-
-                .then((result) => {
-                    alert("Registro Exitoso");
-                })
-                .catch((error) => {
-                    console.log(error)
-                    alert("ERROR: Fallo en el registro.");
-                    console.log(error.response.data)
-
-                });
-                
         },
-        verifyToken: function () {
-            return axios.post("https://be-sharebook.herokuapp.com/refresh/", {refresh: localStorage.getItem("token_refresh")}, {headers: {}})
-                .then((result) => {
-                    localStorage.setItem("token_access", result.data.access);
-                })
-                .catch(() => {
-                    this.$emit('logOut');
-                    
-                });
-        }
 
+        methods: {
+            processAddBook: async function(){
+                    await this.$apollo.mutate(
+                            {
+                                mutation: gql`
+                                mutation CreateBook($book: BookInput!) {
+                                        createBook(book: $book) {
+                                            isbn
+                                            title
+                                            language
+                                            price
+                                            state
+                                            editorial
+                                            author
+                                            grade
+                                        }
+                                    }
+                                `,
+                                variables: {
+                                    credentials: this.book,
+                                },
+                            }
+                        )
+                    
+                    .then((result) => {
+                        let dataAddBook = {
+                            username: this.user.username,
+                            token_access: result.data.createBook.access,
+                            token_refresh: result.data.createBook.refresh,
+                        };
+                        this.$emit("completedAddBook", dataAddBook);
+                    })
+                    
+                    .catch((error) => {
+                        console.log(error);
+                        alert("ERROR 401: Credenciales Incorrectas.");
+
+                    });
+            },
+        },
     }
-}
 </script>
 
 <style>

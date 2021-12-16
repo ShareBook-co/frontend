@@ -1,82 +1,57 @@
 <template>
 
-    <div v-if="loaded" class="information">
+    <div class="information">
         <h1><center>Información del Usuario</center></h1>
-        <h2><center>Nombre: <span>{{name}}</span></center></h2>
-        <h2><center>Correo electrónico: <span>{{email}}</span></center></h2>
-        <h2><center>Dirección: <span>{{address}}</span></center></h2>
-        <h2><center>Teléfono: <span>{{phone}}</span></center></h2>
+        <h2><center>Nombre: <span>{{ userDetailById.name }}</span></center></h2>
+        <h2><center>Correo electrónico: <span>{{ userDetailById.email }}</span></center></h2>
+        <h2><center>Dirección: <span>{{ userDetailById.address }}</span></center></h2>
+        <h2><center>Teléfono: <span>{{ userDetailById.phone }}</span></center></h2>
         <!-- <h2>Genero: <span>{{gender}}</span></h2> -->
-        <h2><center>
-            Género:
-            <span v-if="!gender">Masculino</span>
-            <span v-if="gender">Femenino</span> 
-        </center>
-        </h2>
     </div>
 
 </template>
 
 <script>
-import jwt_decode from "jwt-decode";
-import axios from 'axios';
+    import gql from "graphql-tag";
+    import jwt_decode from "jwt-decode";
 
-export default {
-    name: "User",
+    export default {
+        name: "User",
 
-    data: function(){
-        return {
-            name: "",
-            email: "",
-            address: "",
-            phone: "",
-            gender:"",
-            loaded: false,
-        }
-    },
-
-    methods: {
-        getData: async function () {
-
-            if (localStorage.getItem("token_access") === null || localStorage.getItem("token_refresh") === null) {
-                this.$emit('logOut');
-                return;
-            }
-
-            await this.verifyToken();
-            let token = localStorage.getItem("token_access");
-            let userId = jwt_decode(token).user_id.toString();
-
-            axios.get(`https://be-sharebook.herokuapp.com/user/${userId}/`, {headers: {'Authorization': `Bearer ${token}`}})
-                .then((result) => {
-                    this.name = result.data.name;
-                    this.email = result.data.email;
-                    this.address = result.data.address;
-                    this.phone = result.data.phone;
-                    this.gender = result.data.gender;
-                    this.loaded = true;
-                    })
-                .catch(() => {
-                    this.$emit('logOut');
-                });
+        data: function(){
+            return {
+                userId: jwt_decode( localStorage.getItem("token_access" ) ).user_id,
+                userDetailById: {
+                    name: "",
+                    email: "",
+                    address: "",
+                    phone: 0,
+                },
+            };
         },
 
-        verifyToken: function () {
-            return axios.post("https://be-sharebook.herokuapp.com/refresh/", {refresh: localStorage.getItem("token_refresh")}, {headers: {}})
-                .then((result) => {
-                    localStorage.setItem("token_access", result.data.access);
-                })
-                .catch(() => {
-                    this.$emit('logOut');
-                });
+        apollo: {
+            userDetailById: {
+                query: gql `
+                    query UserDetailById($userId: Int!) {
+                        userDetailById(userId: $userId) {
+                            name
+                            email
+                            address
+                            phone
+                        }
+                    }
+                `,
+                variables() {
+                    return {
+                        userId: this.userId,
+                    };
+                }
+            },
         }
-    },
-
-    created: async function(){
-        this.getData();
-    },
-}
+    };
 </script>
+
 
 <style>
     .information{

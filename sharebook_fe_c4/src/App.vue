@@ -4,7 +4,6 @@
     <div class="header">
 
       <img src="./assets/logo_libro.png">
-      <h1><em>Share<span>Book</span></em></h1>
       <!-- <h1><em>Share<span>Book®</span></em></h1> -->
 
     </div> 
@@ -40,77 +39,76 @@
 </template>
 
 <script>
-export default {
-  name: 'App',
+  export default {
+    name: 'App',
 
-  data: function(){
-      return{
-        is_auth: false
+    computed: {
+      is_auth: {
+        get: function() {
+          return this.$route.meta.requiresAuth;
+        },
+        set: function() { }
       }
-  },
+    },
 
-  components: {
-  },
-
-  methods:{
-    verifyAuth: function() {
-          this.is_auth = localStorage.getItem("isAuth") || false;
-      
-          if(this.is_auth == false)
-            this.$router.push({name: "logIn"});
-          else
-            this.$router.push({ name: "home" });
-    },
-    loadLogIn: function(){
-        this.$router.push({name: "logIn"})
-    },
-    loadSignUp: function(){
-        this.$router.push({name: "signUp"})
-    },
-    loadHome: function() {
+    methods:{
+      loadHome: function () {
         this.$router.push({ name: "home" });
-    },
-    logOut: function () {
+      },
+      
+      loadUser: function () {
+        this.$router.push({ name: "user" });
+      },
+
+      logOut: function () {
         localStorage.clear();
-        alert("Sesión Cerrada");
-        this.verifyAuth();
-    },
-    loadUser: function () {
-      this.$router.push({ name: "user" });
-    },
-    loadAddBook: function () {
-      this.$router.push({ name: "addbook" });
-    },
-    loadListBook: function () {
-      this.$router.push({ name: "book" });
+        alert("Sesión Terminada");
+        this.loadLogIn();
+      },
+      
+      loadLogIn: function(){
+        this.$router.push({name: "logIn"})
+      },
+      
+      loadSignUp: function(){
+          this.$router.push({name: "signUp"})
+      },
+
+      completedLogIn: function(data){
+          localStorage.setItem('username', data.username);
+          localStorage.setItem('token_refresh', data.token_refresh);
+          localStorage.setItem('token_access', data.token_access);
+          alert("Autenticación Exitosa");
+          this.loadHome;
+      },
+      
+      loadAddBook: function () {
+        this.$router.push({ name: "addbook" });
+      },
+      
+      loadListBook: function () {
+        this.$router.push({ name: "book" });
+      },
+
+      completedSignUp: function(data) {
+          alert("Registro Exitoso");
+          this.completedLogIn(data);
+      },
     },
 
-    completedLogIn: function(data) {
-        localStorage.setItem("isAuth", true);
-        localStorage.setItem("username", data.username);
-        localStorage.setItem("token_access", data.token_access);
-        localStorage.setItem("token_refresh", data.token_refresh);
-        alert("Autenticación Exitosa");
-        this.verifyAuth();
-    },
-
-    completedSignUp: function(data) {
-        alert("Registro Exitoso");
-        this.completedLogIn(data);
-    },
-
-  },
-
-  created: function(){
-        this.verifyAuth()
+    created: function(){
+    }
   }
-
-}
 </script>
 
 <style>
   body{
     margin: 0 0 0 0;
+  }
+
+  .header img{
+    height: 210%;
+
   }
 
   .header{

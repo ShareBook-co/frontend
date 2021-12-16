@@ -1,6 +1,6 @@
 <template>
 
-    <div v-if="loaded" class="informations">
+    <div class="informations">
 
         <table>
             <center>
@@ -37,55 +37,62 @@
 </template>
 
 <script>
-import axios from 'axios';
+    import gql from "graphql-tag";
 
-export default {
-    name: "Book",
+    export default {
+        name: "Book",
 
-    data: function(){
-        return {
-            books: [],
-            loaded: false,
-        }
-    },
-
-    methods: {
-        getData: async function () {
-
-            if (localStorage.getItem("token_access") === null || localStorage.getItem("token_refresh") === null) {
-                this.$emit('logOut');
-                return;
-            }
-
-            await this.verifyToken();
-            let token = localStorage.getItem("token_access");
-
-
-            axios.get(`https://be-sharebook.herokuapp.com/book/`, {headers: {'Authorization': `Bearer ${token}`}})
-                .then((result) => {
-                    this.books = result.data;
-                    this.loaded = true;
-                    })
-                .catch((error) => {
-                    console.log(error.response.data)
-                });
+        data: function(){
+            return {
+                book: {
+                    bookId: 0,
+                },
+            };
         },
 
-        verifyToken: function () {
-            return axios.post("https://be-sharebook.herokuapp.com/refresh/", {refresh: localStorage.getItem("token_refresh")}, {headers: {}})
-                .then((result) => {
-                    localStorage.setItem("token_access", result.data.access);
-                })
-                .catch(() => {
-                    this.$emit('logOut');
-                });
-        }
-    },
+        
+        methods: {
+            processListBook: async function(){
+                    await this.$apollo.mutate(
+                        {
+                            mutation: gql`
+                                query BooksById($bookId: String!) {
+                                  booksById(bookId: $bookId) {
+                                    id
+                                    isbn
+                                    title
+                                    language
+                                    price
+                                    state
+                                    editorial
+                                    author
+                                    grade
+                                  }
+                                }
+                            `,
+                            variables: {
+                                credentials: this.user,
+                            },
+                        }
+                    )
+                    
+                    .then((result) => {
+                        let dataUpdateBook = {
+                            username: this.user.username,
+                            token_access: result.data.updateBook.access,
+                            token_refresh: result.data.updateBook.refresh,
+                        };
+                        this.$emit('completedListBook', dataUpdateBook);
+                    })
+                    
+                    .catch((error) => {
+                        console.log(error);
+                        alert("ERROR 401: Credenciales Incorrectas.");
 
-    created: async function(){
-        this.getData();
-    },
-}
+                    });
+            },
+        },
+    }
 </script>
 
 <style>
